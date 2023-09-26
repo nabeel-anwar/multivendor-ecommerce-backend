@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
 
 const userRoleEnum = ["customer", "vendor", "admin", "editor"];
 const userGenderEnum = ["male", "female", "other"];
@@ -72,7 +73,7 @@ const userSchema = new mongoose.Schema({
     },
     required: true,
   },
-
+  passwordChangedAt: Date,
   active: {
     type: Boolean,
     default: true,
@@ -91,6 +92,32 @@ const userSchema = new mongoose.Schema({
   timestamps: true,
   toJSON: {virtuals: true},
   toObject: {virtuals: true}
+});
+
+
+// Document Middleware runs on .create or .save
+
+userSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) return next(); // for not encrypt again when update detail
+
+  this.password = await bcrypt.hash(this.password, 12);
+
+  next();
+});
+
+
+userSchema.pre('save', function (next) {
+  if (!this.isModified('password') || this.isNew) return next();
+
+  this.passwordChangedAt = Date.now() - 1000;
+  next();
+});
+
+// for getting active user
+userSchema.pre(/^find/, function (next) {
+  // this points to the current query
+  this.find({ active: { $ne: false } });
+  next();
 });
 
 module.exports = mongoose.model("User", userSchema);
