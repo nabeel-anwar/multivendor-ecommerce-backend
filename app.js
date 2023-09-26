@@ -6,6 +6,8 @@ const xss = require("xss-clean");
 
 const AppError = require("./utils/appError");
 
+const userRouter = require('./routes/userRoutes');
+
 const app = express();
 
 // 1) Middlewares
@@ -40,7 +42,7 @@ app.use((request, response, next) => {
 });
 
 // 2) Routes
-
+app.use('/api/v1/users', userRouter);
 app.all("*", (request, response, next) => {
   // const err = new Error(`can't find ${request.originalUrl} on this server`);
   // err.status = "fail";
