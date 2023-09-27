@@ -8,4 +8,8 @@ userRouter
     .get(userController.getAllUser)
     .post(userController.createUser);
 
+userRouter
+    .route('/:id')
+    .patch(userController.updateMe);
+
 module.exports = userRouter;
