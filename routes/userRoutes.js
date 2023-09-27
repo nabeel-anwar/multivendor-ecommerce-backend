@@ -10,6 +10,7 @@ userRouter
 
 userRouter
     .route('/:id')
-    .patch(userController.updateMe);
+    .patch(userController.updateMe)
+    .delete(userController.deleteMe);
 
 module.exports = userRouter;

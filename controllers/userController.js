@@ -10,10 +10,10 @@ const filterObj = (obj, ...allowedFields) => {
     return newObj;
 };
 
-exports.updateMe = async (req, res, next) => {
+exports.updateMe = async (request, response, next) => {
     try {
         // 1) Create error if user POSTs password data
-        if (req.body.password || req.body.passwordConfirm) {
+        if (request.body.password) {
             return next(
                 new AppError(
                     'This route is not for password updates. Please use /updateMyPassword.',
@@ -23,19 +23,35 @@ exports.updateMe = async (req, res, next) => {
         }
 
         // 2) Filtered out unwanted fields names that are not allowed to be updated
-        const filteredBody = filterObj(req.body, 'firstName', 'lastName', 'email', 'phoneNumber');
+        const filteredBody = filterObj(request.body, 'firstName', 'lastName', 'email', 'phoneNumber');
 
         // 3) Update user document
-        const updatedUser = await User.findByIdAndUpdate(req.params.id, filteredBody, {
+        const updatedUser = await User.findByIdAndUpdate(request.params.id, filteredBody, {
             new: true,
             runValidators: true
         });
 
-        res.status(200).json({
+        if(!updatedUser) return next(new AppError('User not found', 404));
+
+        response.status(200).json({
             status: 'success',
             data: {
                 user: updatedUser
             }
+        });
+    } catch (error) {
+        error.statusCode = 404;
+        next(error);
+    }
+};
+
+exports.deleteMe = async (request, response, next) => {
+    try {
+        await User.findByIdAndUpdate(request.params.id, {active: false});
+
+        response.status(204).json({
+            status: 'success',
+            data: null
         });
     } catch (error) {
         error.statusCode = 404;
