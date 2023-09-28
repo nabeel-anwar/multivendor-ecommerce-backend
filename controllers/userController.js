@@ -62,4 +62,6 @@ exports.deleteMe = async (request, response, next) => {
 
 exports.getAllUser = factory.getAll(User);
 
+exports.getUser = factory.getOne(User);
+
 exports.createUser = factory.createOne(User);

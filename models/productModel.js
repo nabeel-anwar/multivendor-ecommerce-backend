@@ -58,15 +58,15 @@ const productSchema = new mongoose.Schema({
         name: String, // e.g., 'size', 'color'
         value: String, // e.g., 'XL', 'Red'
     }],
-    brandId: {
+    brand: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Brand',
     },
-    categoryId: {
+    category: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Category',
     },
-    sellerId: {
+    seller: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Seller',
     },
