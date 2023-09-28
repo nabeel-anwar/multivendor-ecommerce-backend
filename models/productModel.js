@@ -72,6 +72,10 @@ const productSchema = new mongoose.Schema({
     },
     slug: String,
     isCodAllowed: Boolean,
+}, {
+    timestamps: true,
+    toJSON: {virtuals: true},
+    toObject: {virtuals: true}
 });
 
 module.exports = mongoose.model('Product', productSchema);
