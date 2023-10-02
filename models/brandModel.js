@@ -15,11 +15,12 @@ const brandSchema = new mongoose.Schema({
     active: {
         type: Boolean,
         default: true,
+        select: false,
     }
 }, {
-    timeStamp: true,
-    toJSON: {virtuals: true},
+    timestamps: true,
     toObject: {virtuals: true},
-})
+    toJSON: {virtuals: true}
+});
 
 module.exports = mongoose.model('Brand', brandSchema);
