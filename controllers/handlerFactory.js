@@ -6,7 +6,7 @@ exports.deleteOne = (Model) => {
         try {
             const doc = await Model.findByIdAndDelete(request.params.id);
 
-            if (!doc) next(new AppError('no document found with this id', 404));
+            if (!doc) return next(new AppError('no document found with this id', 404));
 
             response.status(204).json({
                 status: 'success',
@@ -31,11 +31,11 @@ exports.updateOne = (Model) => {
                 }
             );
 
+            if (!doc) return next(new AppError('no document found with this id', 404));
+
             response.status(200).json({
                 status: 'success',
-                data: {
-                    data: doc,
-                },
+                data: doc,
             });
         } catch (error) {
             error.statusCode = 404;
@@ -68,6 +68,8 @@ exports.getOne = (Model, popOption) => {
             let query = Model.findById(request.params.id);
             if (popOption) query = query.populate(popOption);
             const doc = await query;
+
+            if (!doc) return next(new AppError('no document found with this id', 404));
 
             response.status(200).json({
                 status: 'success',
