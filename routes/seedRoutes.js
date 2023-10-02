@@ -7,5 +7,7 @@ seedRouter.get('/users', seedController.seedUser);
 seedRouter.get('/sellers', seedController.seedSeller);
 seedRouter.get('/categories', seedController.seedCategories);
 seedRouter.get('/brands', seedController.seedBrands);
+seedRouter.get('/products', seedController.seedProduct);
+seedRouter.get('/reviews', seedController.seedReviews);
 
 module.exports = seedRouter;

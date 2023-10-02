@@ -74,7 +74,10 @@ const productSchema = new mongoose.Schema({
         required: true
     },
     slug: String,
-    isCodAllowed: Boolean,
+    isCodAllowed: {
+        type: Boolean,
+        required: true
+    },
 }, {
     timestamps: true,
     toJSON: {virtuals: true},

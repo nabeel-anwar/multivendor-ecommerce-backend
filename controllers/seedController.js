@@ -2,6 +2,8 @@ const User = require('./../models/userModel');
 const Seller = require('./../models/sellerModel');
 const Category = require('./../models/categoryModel');
 const Brand = require('./../models/brandModel');
+const Product = require('./../models/productModel');
+const Review = require('./../models/reviewModel');
 
 const {faker} = require('@faker-js/faker');
 
@@ -44,14 +46,14 @@ exports.seedSeller = async (request, response, next) => {
         // 1) get user ids for applying to seller
         const userIds = [];
         users.forEach((user, index) => {
-            if(!(index * 10 >= countUsers))  userIds.push(user._id);
-        } )
+            if (!(index * 10 >= countUsers)) userIds.push(user._id);
+        })
         // 2) Create fake users with userId
         for (let i = 0; i < userIds.length; i++) {
             sellers.push({
                 userId: userIds[i],
-                storeName: faker.lorem.words({ min: 1, max: 3 }),
-                storeDescription: faker.lorem.sentences({ min: 1, max: 3 }),
+                storeName: faker.lorem.words({min: 1, max: 3}),
+                storeDescription: faker.lorem.sentences({min: 1, max: 3}),
                 logo: faker.image.avatar(),
                 bankName: faker.lorem.word() + " Bank",
                 bankCode: "1234",
@@ -62,7 +64,7 @@ exports.seedSeller = async (request, response, next) => {
                 signature: "url"
             })
         }
-        
+
         //3) add user to database
         const docs = await Seller.create(sellers);
 
@@ -78,7 +80,7 @@ exports.seedSeller = async (request, response, next) => {
 }
 
 exports.seedCategories = async (request, response, next) => {
-    try{
+    try {
         const categories = [];
         for (let i = 0; i < 10; i++) {
             categories.push({
@@ -96,14 +98,14 @@ exports.seedCategories = async (request, response, next) => {
             data: docs
         })
 
-    }catch (error) {
+    } catch (error) {
         error.statusCode = 404;
         next(error);
     }
 }
 
 exports.seedBrands = async (request, response, next) => {
-    try{
+    try {
         const brands = [];
         for (let i = 0; i < 10; i++) {
             brands.push({
@@ -122,7 +124,94 @@ exports.seedBrands = async (request, response, next) => {
             data: docs
         })
 
-    }catch (error) {
+    } catch (error) {
+        error.statusCode = 404;
+        next(error);
+    }
+}
+
+exports.seedProduct = async (request, response, next) => {
+    try {
+        const products = [];
+
+        const sellers = await Seller.find();
+
+        const categories = await Category.find();
+
+        const brands = await Brand.find();
+
+        for (let i = 0; i < 10; i++) {
+            products.push({
+                title: faker.commerce.productName(),
+                shortDescription: faker.commerce.productDescription(),
+                extraDescription: faker.commerce.productDescription(),
+                price: faker.commerce.price(),
+                quantity: Math.floor(Math.random() * 100),
+                totalAllowedQuantity: Math.floor(Math.random() * 500),
+                minOrderQuantity: Math.floor(Math.random() * 10),
+                maxOrderQuantity: Math.floor(Math.random() * 100),
+                images: [
+                    `https://picsum.photos/200/300?image=${Math.floor(Math.random() * 1000)}`,
+                    `https://picsum.photos/200/300?image=${Math.floor(Math.random() * 1000)}`,
+                    `https://picsum.photos/200/300?image=${Math.floor(Math.random() * 1000)}`
+                ],
+                tags: [
+                    faker.commerce.productAdjective(),
+                    faker.commerce.productAdjective(),
+                    faker.commerce.productAdjective()
+                ],
+                isReturnable: true,
+                isCancelable: false,
+                brand: brands[Math.floor(Math.random() * brands.length)]._id,
+                category: categories[Math.floor(Math.random() * categories.length)]._id,
+                seller: sellers[Math.floor(Math.random() * sellers.length)]._id,
+                isCodAllowed: true
+            })
+        }
+
+        const docs = await Product.create(products);
+
+        response.status(200).json({
+            status: 'success',
+            length: docs.length,
+            data: docs
+        })
+    } catch (error) {
+        error.statusCode = 404;
+        next(error);
+    }
+}
+
+exports.seedReviews = async (request, response, next) => {
+    try {
+        const reviews = [];
+
+        const users = await User.find();
+
+        const products = await Product.find();
+
+        for (let i = 0; i < 50; i++) {
+            reviews.push({
+                review: faker.lorem.sentences({min: 1, max: 3}),
+                rating: Math.floor(Math.random() * 5) + 1,
+                images: [
+                    `https://picsum.photos/200/300?image=${Math.floor(Math.random() * 1000)}`,
+                    `https://picsum.photos/200/300?image=${Math.floor(Math.random() * 1000)}`,
+                    `https://picsum.photos/200/300?image=${Math.floor(Math.random() * 1000)}`
+                ],
+                user: users[Math.floor(Math.random() * users.length)]._id,
+                product: products[Math.floor(Math.random() * products.length)]._id
+            })
+        }
+
+        const docs = await Review.create(reviews);
+
+        response.status(200).json({
+            status: 'success',
+            length: docs.length,
+            data: docs
+        });
+    } catch (error) {
         error.statusCode = 404;
         next(error);
     }
