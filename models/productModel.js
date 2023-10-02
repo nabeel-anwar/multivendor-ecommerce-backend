@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const slugify = require('slugify');
 
 const productSchema = new mongoose.Schema({
     title: {
@@ -79,5 +80,11 @@ const productSchema = new mongoose.Schema({
     toJSON: {virtuals: true},
     toObject: {virtuals: true}
 });
+
+productSchema.pre('save', function(next) {
+    this.slug = slugify(this.title, { lower: true });
+    next();
+});
+
 
 module.exports = mongoose.model('Product', productSchema);

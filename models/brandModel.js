@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const slugify = require('slugify');
 
 const brandSchema = new mongoose.Schema({
     name: {
@@ -21,6 +22,12 @@ const brandSchema = new mongoose.Schema({
     timestamps: true,
     toObject: {virtuals: true},
     toJSON: {virtuals: true}
+});
+
+
+brandSchema.pre('save', function(next) {
+    this.slug = slugify(this.name, { lower: true });
+    next();
 });
 
 module.exports = mongoose.model('Brand', brandSchema);

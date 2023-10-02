@@ -11,6 +11,8 @@ const sellerRouter = require('./routes/sellerRoutes');
 const brandRouter = require('./routes/brandRoutes');
 const categoryRouter = require('./routes/categoryRoutes');
 const seedRouter = require('./routes/seedRoutes');
+const productRouter = require('./routes/productRoutes');
+const reviewRouter = require('./routes/reviewRoutes');
 
 const app = express();
 
@@ -50,6 +52,8 @@ app.use('/api/v1/users', userRouter);
 app.use('/api/v1/sellers', sellerRouter);
 app.use('/api/v1/categories', categoryRouter);
 app.use('/api/v1/brands', brandRouter);
+app.use('/api/v1/products', productRouter);
+app.use('/api/v1/reviews', reviewRouter);
 
 app.use('/api/v1/seed', seedRouter);
 app.all("*", (request, response, next) => {
