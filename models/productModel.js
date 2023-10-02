@@ -65,10 +65,12 @@ const productSchema = new mongoose.Schema({
     category: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Category',
+        required: true
     },
     seller: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Seller',
+        required: true
     },
     slug: String,
     isCodAllowed: Boolean,

@@ -54,10 +54,7 @@ const userSchema = new mongoose.Schema({
     required: true,
   },
 
-  profilePicture: {
-    type: mongoose.Schema.ObjectId,
-    ref: "Media",
-  },
+  profilePicture: String,
 
   // Address information
   address: {

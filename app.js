@@ -7,6 +7,7 @@ const xss = require("xss-clean");
 const AppError = require("./utils/appError");
 
 const userRouter = require('./routes/userRoutes');
+const sellerRouter = require('./routes/sellerRoutes');
 const seedRouter = require('./routes/seedRoutes');
 
 const app = express();
@@ -44,6 +45,7 @@ app.use((request, response, next) => {
 
 // 2) Routes
 app.use('/api/v1/users', userRouter);
+app.use('/api/v1/sellers', sellerRouter);
 app.use('/api/v1/seed', seedRouter);
 app.all("*", (request, response, next) => {
   // const err = new Error(`can't find ${request.originalUrl} on this server`);

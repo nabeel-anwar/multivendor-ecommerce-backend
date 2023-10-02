@@ -103,9 +103,7 @@ exports.getAll = (Model) => {
                 status: 'success',
                 requestedAt: request.requestTime,
                 length: doc.length,
-                data: {
-                    data: doc,
-                },
+                data: doc,
             });
         } catch (error) {
             error.statusCode = 404;
