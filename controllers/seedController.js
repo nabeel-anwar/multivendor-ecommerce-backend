@@ -9,8 +9,10 @@ const {faker} = require('@faker-js/faker');
 
 exports.seedUser = async (request, response, next) => {
     try {
+        console.log(request.url)
+        request.query.user = request.query.user || 50;
         let users = [];
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < request.query.user; i++) {
             users.push({
                 firstName: faker.person.firstName(),
                 lastName: faker.person.lastName(),
@@ -25,6 +27,8 @@ exports.seedUser = async (request, response, next) => {
         }
 
         const docs = await User.create(users);
+
+        if(request.url.startsWith('/collections')) return next();
 
         response.status(200).json({
             status: 'success',
@@ -44,7 +48,7 @@ exports.seedSeller = async (request, response, next) => {
         const countUsers = users.length;
 
         // 1) get user ids for applying to seller
-        const userIds = [];
+        const userIds = []; // for getting every 5th users id.
         users.forEach((user, index) => {
             if (!(index * 10 >= countUsers)) userIds.push(user._id);
         })
@@ -67,6 +71,8 @@ exports.seedSeller = async (request, response, next) => {
 
         //3) add user to database
         const docs = await Seller.create(sellers);
+        request.query.seller = docs.length;
+        if(request.url.startsWith('/collections')) return next();
 
         response.status(200).json({
             status: 'success',
@@ -81,8 +87,9 @@ exports.seedSeller = async (request, response, next) => {
 
 exports.seedCategories = async (request, response, next) => {
     try {
+        request.query.category = request.query.category || 20;
         const categories = [];
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < request.query.category; i++) {
             categories.push({
                 name: faker.lorem.words({min: 1, max: 3}),
                 image: `https://picsum.photos/200/300?image=${Math.floor(Math.random() * 1000)}`,
@@ -91,6 +98,8 @@ exports.seedCategories = async (request, response, next) => {
         }
 
         const docs = await Category.create(categories);
+
+        if(request.url.startsWith('/collections')) return next();
 
         response.status(200).json({
             status: 'success',
@@ -106,8 +115,9 @@ exports.seedCategories = async (request, response, next) => {
 
 exports.seedBrands = async (request, response, next) => {
     try {
+        request.query.brand = request.query.brand || 10;
         const brands = [];
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < request.query.brand; i++) {
             brands.push({
                 name: faker.lorem.words({min: 1, max: 3}),
                 logo: faker.image.avatar(),
@@ -117,6 +127,8 @@ exports.seedBrands = async (request, response, next) => {
         }
 
         const docs = await Brand.create(brands);
+
+        if(request.url.startsWith('/collections')) return next();
 
         response.status(200).json({
             status: 'success',
@@ -132,6 +144,8 @@ exports.seedBrands = async (request, response, next) => {
 
 exports.seedProduct = async (request, response, next) => {
     try {
+        request.query.product = request.query.product || 50;
+
         const products = [];
 
         const sellers = await Seller.find();
@@ -140,7 +154,7 @@ exports.seedProduct = async (request, response, next) => {
 
         const brands = await Brand.find();
 
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < request.query.product; i++) {
             products.push({
                 title: faker.commerce.productName(),
                 shortDescription: faker.commerce.productDescription(),
@@ -171,6 +185,8 @@ exports.seedProduct = async (request, response, next) => {
 
         const docs = await Product.create(products);
 
+        if(request.url.startsWith('/collections')) return next();
+
         response.status(200).json({
             status: 'success',
             length: docs.length,
@@ -184,13 +200,15 @@ exports.seedProduct = async (request, response, next) => {
 
 exports.seedReviews = async (request, response, next) => {
     try {
+        request.query.review = request.query.review || 100;
+
         const reviews = [];
 
         const users = await User.find();
 
         const products = await Product.find();
 
-        for (let i = 0; i < 50; i++) {
+        for (let i = 0; i < request.query.review; i++) {
             reviews.push({
                 review: faker.lorem.sentences({min: 1, max: 3}),
                 rating: Math.floor(Math.random() * 5) + 1,
@@ -205,6 +223,18 @@ exports.seedReviews = async (request, response, next) => {
         }
 
         const docs = await Review.create(reviews);
+
+        if(request.url.startsWith('/collections')) return response.status(200).json({
+            status: 'success',
+            seeded: {
+                Users: request.query.user,
+                Sellers: request.query.seller,
+                Categories: request.query.category,
+                Brands: request.query.brand,
+                Products: request.query.product,
+                Reviews: request.query.review
+            }
+        })
 
         response.status(200).json({
             status: 'success',
