@@ -70,6 +70,13 @@ const sellerSchema = new mongoose.Schema({
     toObject: {virtuals: true}
 });
 
+// Virtuals
+sellerSchema.virtual('reviews', {
+    ref: 'Review',
+    foreignField: 'seller',
+    localField: '_id'
+});
+
 sellerSchema.post('save', async function (next) {
     try {
         await User.findByIdAndUpdate(

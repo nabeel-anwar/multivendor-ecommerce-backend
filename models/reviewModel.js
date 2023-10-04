@@ -40,4 +40,69 @@ reviewSchema.pre('save', async function(next){
     this.seller = product.seller;
 });
 
+reviewSchema.statics.calcProductAvgRating = async function(productId) {
+    try{
+        const stats = await this.aggregate([
+            {
+             $match: {product: productId}
+            },
+            {
+                $group: {
+                    _id: '$product',
+                    nRating: { $sum: 1 },
+                    avgRating: { $avg: '$rating' }
+                }
+            }
+        ]);
+
+        //console.log(stats);
+
+        if(stats.length > 0){
+            await Product.findByIdAndUpdate(productId, {
+                ratingsQuantity: stats[0].nRating,
+                ratingsAverage: stats[0].avgRating
+            })
+        }
+    } catch (error) {
+        error.statusCode = 404;
+        next(error);
+    }
+}
+
+reviewSchema.statics.calcSellerAvgRating = async function(sellerId) {
+    try{
+        const stats = await this.aggregate([
+            {
+                $match: {seller: sellerId}
+            },
+            {
+                $group: {
+                    _id: '$seller',
+                    nRating: { $sum: 1 },
+                    avgRating: { $avg: '$rating' }
+                }
+            }
+        ]);
+
+        console.log(stats);
+
+        if(stats.length > 0){
+            await Seller.findByIdAndUpdate(sellerId, {
+                ratingsQuantity: stats[0].nRating,
+                ratingsAverage: stats[0].avgRating
+            })
+        }
+    } catch (error) {
+        error.statusCode = 404;
+        next(error);
+    }
+}
+
+reviewSchema.post('save', async function(){
+    // this points to current review document
+    await this.constructor.calcProductAvgRating(this.product);
+    await this.constructor.calcSellerAvgRating(this.seller);
+})
+
+
 module.exports = mongoose.model('Review', reviewSchema);

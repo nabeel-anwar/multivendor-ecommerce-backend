@@ -84,8 +84,14 @@ const productSchema = new mongoose.Schema({
     toObject: {virtuals: true}
 });
 
-productSchema.pre('save', function(next) {
-    this.slug = slugify(this.title, { lower: true });
+productSchema.virtual('reviews', {
+    ref: 'Review',
+    foreignField: 'product',
+    localField: '_id'
+});
+
+productSchema.pre('save', function (next) {
+    this.slug = slugify(this.title, {lower: true});
     next();
 });
 
