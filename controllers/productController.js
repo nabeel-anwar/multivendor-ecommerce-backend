@@ -3,7 +3,7 @@ const Factory = require('./handlerFactory');
 
 exports.getProducts = Factory.getAll(Product);
 
-exports.getProduct = Factory.getOne(Product);
+exports.getProduct = Factory.getOne(Product, {path: 'reviews', select: 'review rating images user seller'});
 
 exports.createProduct = Factory.createOne(Product);
 

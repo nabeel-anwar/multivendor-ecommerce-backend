@@ -84,7 +84,7 @@ reviewSchema.statics.calcSellerAvgRating = async function(sellerId) {
             }
         ]);
 
-        console.log(stats);
+        //console.log(stats);
 
         if(stats.length > 0){
             await Seller.findByIdAndUpdate(sellerId, {
@@ -104,5 +104,12 @@ reviewSchema.post('save', async function(){
     await this.constructor.calcSellerAvgRating(this.seller);
 })
 
+reviewSchema.pre(/^find/, function(next){
+    this.populate({
+        path: 'user',
+        select: 'firstName profilePicture'
+    });
+    next();
+})
 
 module.exports = mongoose.model('Review', reviewSchema);

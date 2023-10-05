@@ -84,6 +84,7 @@ const productSchema = new mongoose.Schema({
     toObject: {virtuals: true}
 });
 
+
 productSchema.virtual('reviews', {
     ref: 'Review',
     foreignField: 'product',
