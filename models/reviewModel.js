@@ -35,32 +35,45 @@ const reviewSchema = new mongoose.Schema({
 });
 
 // DOCUMENT MIDDLEWARE: runs before .save() and .create()
-reviewSchema.pre('save', async function(next){
+reviewSchema.pre('save', async function (next) {
     const product = await Product.findById(this.product);
     this.seller = product.seller;
 });
 
-reviewSchema.statics.calcProductAvgRating = async function(productId) {
-    try{
+reviewSchema.pre(/^find/, function (next) {
+    this.populate({
+        path: 'user',
+        select: 'firstName profilePicture'
+    });
+    next();
+})
+
+reviewSchema.statics.calcProductAvgRating = async function (productId) {
+    try {
         const stats = await this.aggregate([
             {
-             $match: {product: productId}
+                $match: {product: productId}
             },
             {
                 $group: {
                     _id: '$product',
-                    nRating: { $sum: 1 },
-                    avgRating: { $avg: '$rating' }
+                    nRating: {$sum: 1},
+                    avgRating: {$avg: '$rating'}
                 }
             }
         ]);
 
-        //console.log(stats);
+        console.log(stats);
 
-        if(stats.length > 0){
+        if (stats.length > 0) {
             await Product.findByIdAndUpdate(productId, {
                 ratingsQuantity: stats[0].nRating,
                 ratingsAverage: stats[0].avgRating
+            })
+        }else {
+            await Product.findByIdAndUpdate(productId, {
+                ratingsQuantity: 0,
+                ratingsAverage: 0
             })
         }
     } catch (error) {
@@ -69,8 +82,8 @@ reviewSchema.statics.calcProductAvgRating = async function(productId) {
     }
 }
 
-reviewSchema.statics.calcSellerAvgRating = async function(sellerId) {
-    try{
+reviewSchema.statics.calcSellerAvgRating = async function (sellerId) {
+    try {
         const stats = await this.aggregate([
             {
                 $match: {seller: sellerId}
@@ -78,18 +91,23 @@ reviewSchema.statics.calcSellerAvgRating = async function(sellerId) {
             {
                 $group: {
                     _id: '$seller',
-                    nRating: { $sum: 1 },
-                    avgRating: { $avg: '$rating' }
+                    nRating: {$sum: 1},
+                    avgRating: {$avg: '$rating'}
                 }
             }
         ]);
 
         //console.log(stats);
 
-        if(stats.length > 0){
+        if (stats.length > 0) {
             await Seller.findByIdAndUpdate(sellerId, {
                 ratingsQuantity: stats[0].nRating,
                 ratingsAverage: stats[0].avgRating
+            })
+        }else{
+            await Seller.findByIdAndUpdate(sellerId, {
+                ratingsQuantity: 0,
+                ratingsAverage: 0
             })
         }
     } catch (error) {
@@ -98,18 +116,22 @@ reviewSchema.statics.calcSellerAvgRating = async function(sellerId) {
     }
 }
 
-reviewSchema.post('save', async function(){
+reviewSchema.post('save', async function () {
     // this points to current review document
     await this.constructor.calcProductAvgRating(this.product);
     await this.constructor.calcSellerAvgRating(this.seller);
+});
+
+reviewSchema.pre(/^findOneAnd/, async function (next) {
+    console.log("Hello from pre middleware");
+    // console.log(this);
+    next();
+});
+
+reviewSchema.post(/^findOneAnd/, async function (doc){
+    await doc.constructor.calcProductAvgRating(doc.product);
+    await doc.constructor.calcSellerAvgRating(doc.seller);
 })
 
-reviewSchema.pre(/^find/, function(next){
-    this.populate({
-        path: 'user',
-        select: 'firstName profilePicture'
-    });
-    next();
-})
 
 module.exports = mongoose.model('Review', reviewSchema);

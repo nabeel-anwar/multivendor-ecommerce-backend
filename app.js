@@ -8,6 +8,7 @@ const AppError = require("./utils/appError");
 
 const userRouter = require('./routes/userRoutes');
 const sellerRouter = require('./routes/sellerRoutes');
+const addressRouter = require('./routes/addressRouter');
 const brandRouter = require('./routes/brandRoutes');
 const categoryRouter = require('./routes/categoryRoutes');
 const seedRouter = require('./routes/seedRoutes');
@@ -50,6 +51,7 @@ app.use((request, response, next) => {
 // 2) Routes
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/sellers', sellerRouter);
+app.use('/api/v1/addresses', addressRouter);
 app.use('/api/v1/categories', categoryRouter);
 app.use('/api/v1/brands', brandRouter);
 app.use('/api/v1/products', productRouter);
