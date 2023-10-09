@@ -1,7 +1,9 @@
 const Cart = require('./../models/cartModel');
-// const Factory = require('./handlerFactory');
+const Factory = require('./handlerFactory');
 
 const AppError = require('./../utils/appError');
+
+exports.getCarts = Factory.getAll(Cart);
 
 exports.addItemToCart = async (request, response, next) => {
     try {
@@ -50,3 +52,40 @@ exports.addItemToCart = async (request, response, next) => {
         next(error);
     }
 };
+
+const removeItem = async (request, response, next) => {
+    try {
+        const { userId, productId } = request.body;
+
+        // Find the cart for the given user
+        const cart = await Cart.findOne({ userId });
+
+        if (!cart) return next(new AppError('Cart not found', 404));
+
+        // Find the index of the item to remove
+        const itemIndex = cart.items.findIndex(
+            (item) => item.product.toString() === productId
+        );
+
+        if (itemIndex === -1) return next(new AppError('Item not found in cart', 404));
+
+        // Remove the item from the cart using findByIdAndUpdate
+        const updatedCart = await Cart.findByIdAndUpdate(
+            cart._id,
+            {
+                $pull: { 'items': { 'product': productId } },
+            },
+            { new: true }
+        );
+
+        response.json({
+            status: 'success',
+            data: updatedCart
+        });
+    } catch (error) {
+        error.statusCode = 404;
+        next(error);
+    }
+}
+
+exports.removeItemFromCart = removeItem;
