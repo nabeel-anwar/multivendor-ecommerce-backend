@@ -5,6 +5,8 @@ const AppError = require('./../utils/appError');
 
 exports.getCarts = Factory.getAll(Cart);
 
+exports.getCart = Factory.getOne(Cart);
+
 exports.addItemToCart = async (request, response, next) => {
     try {
         const { userId, productId, quantity, price } = request.body;
@@ -89,3 +91,5 @@ const removeItem = async (request, response, next) => {
 }
 
 exports.removeItemFromCart = removeItem;
+
+exports.deleteCart = Factory.deleteOne(Cart);
