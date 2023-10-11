@@ -1,12 +1,12 @@
 const mongoose = require('mongoose');
 
 const orderSchema = new mongoose.Schema({
-    userId: {
+    user: {
         type: mongoose.Schema.ObjectId,
         ref: 'User', // Reference to the user who placed the order
         required: true,
     },
-    addressId: {
+    address: {
         type: mongoose.Schema.ObjectId,
         ref: 'Address', // Reference to the shipping address
         required: true,
@@ -27,8 +27,8 @@ const orderSchema = new mongoose.Schema({
     },
     items: [
         {
-            productId: {
-                type: mongoose.Schema.Types.ObjectId,
+            product: {
+                type: mongoose.Schema.ObjectId,
                 ref: 'Product', // Reference to the product in the order
                 required: true,
             },
@@ -48,18 +48,30 @@ const orderSchema = new mongoose.Schema({
         enum: ['pending', 'confirmed', 'shipped', 'delivered', 'canceled'],
         default: 'pending',
     },
-    paymentInformation: {
-        method: String,
+    paymentMethod: {
+        type: String,
+        enum: ['cod', 'credit_card', 'bank_transfer'],
+        required: true
         // Add more payment-related fields as needed
     },
     shippingTracking: {
-        carrier: String,
-        trackingNumber: String,
+        type:{
+            carrier: String,
+            trackingNumber: String,
+        }
     },
 },{
     timestamps: true,
     toJSON: {virtuals: true},
     toObject: {virtuals: true}
+});
+
+orderSchema.pre(/^find/, function (next) {
+    this.populate({
+        path: 'items.product',
+        select: 'title price'
+    });
+    next();
 })
 
 module.exports = mongoose.model('Order', orderSchema);
