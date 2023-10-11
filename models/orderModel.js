@@ -2,12 +2,12 @@ const mongoose = require('mongoose');
 
 const orderSchema = new mongoose.Schema({
     userId: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: mongoose.Schema.ObjectId,
         ref: 'User', // Reference to the user who placed the order
         required: true,
     },
     addressId: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: mongoose.Schema.ObjectId,
         ref: 'Address', // Reference to the shipping address
         required: true,
     },
@@ -15,7 +15,10 @@ const orderSchema = new mongoose.Schema({
         type: Number,
         required: true,
     },
-    deliveryCharges: Number,
+    deliveryCharges: {
+        type: Number,
+        required: true,
+    },
     promoCode: String,
     promoDiscount: Number,
     finalTotal: {
@@ -53,24 +56,6 @@ const orderSchema = new mongoose.Schema({
         carrier: String,
         trackingNumber: String,
     },
-    orderHistory: [
-        {
-            status: String,
-            timestamp: {
-                type: Date,
-                default: Date.now,
-            },
-        },
-    ],
-    orderNotes: [
-        {
-            note: String,
-            timestamp: {
-                type: Date,
-                default: Date.now,
-            },
-        },
-    ],
 },{
     timestamps: true,
     toJSON: {virtuals: true},
