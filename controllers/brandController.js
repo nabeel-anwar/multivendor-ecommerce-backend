@@ -1,6 +1,8 @@
 const Brand = require('./../models/brandModel');
 const Factory = require('./handlerFactory');
 
+exports.searchBrand = Factory.search(Brand, ['name', 'website']);
+
 exports.getBrands = Factory.getAll(Brand);
 
 exports.getBrand = Factory.getOne(Brand);

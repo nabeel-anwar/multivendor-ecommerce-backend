@@ -3,6 +3,8 @@ const productController = require('./../controllers/productController');
 
 const productRouter = express.Router();
 
+productRouter.get('/filter', productController.searchProduct);
+
 productRouter
     .route('/')
     .get(productController.getProducts)

@@ -3,6 +3,8 @@ const categoryController = require('./../controllers/categoryController');
 
 const categoryRouter = express.Router();
 
+categoryRouter.get('/filter', categoryController.searchCategories);
+
 categoryRouter
     .route('/')
     .get(categoryController.getCategories)

@@ -140,6 +140,7 @@ exports.search = (Model, fieldsToSearch) => {
 
                 response.status(200).json({
                     status: 'success',
+                    value: searchString,
                     length: queryResult.length,
                     data: queryResult
                 })

@@ -3,6 +3,8 @@ const reviewController = require('./../controllers/reviewController');
 
 const reviewRouter = express.Router();
 
+reviewRouter.get('/filter', reviewController.searchReview);
+
 reviewRouter
     .route('/')
     .get(reviewController.getReviews)
