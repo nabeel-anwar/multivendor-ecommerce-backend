@@ -1,4 +1,4 @@
-const factory = require('./handlerFactory');
+const Factory = require('./handlerFactory');
 const AppError = require('./../utils/appError');
 const User = require('./../models/userModel');
 
@@ -59,9 +59,10 @@ exports.deleteMe = async (request, response, next) => {
     }
 };
 
+exports.searchUser = Factory.search(User, ['firstName', 'lastName', 'email', 'phoneNumber']);
 
-exports.getAllUser = factory.getAll(User);
+exports.getAllUser = Factory.getAll(User);
 
-exports.getUser = factory.getOne(User);
+exports.getUser = Factory.getOne(User);
 
-exports.createUser = factory.createOne(User);
+exports.createUser = Factory.createOne(User);

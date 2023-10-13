@@ -3,6 +3,8 @@ const userController = require("../controllers/userController");
 
 const userRouter = express.Router();
 
+userRouter.get('/filter', userController.searchUser);
+
 userRouter
     .route('/')
     .get(userController.getAllUser)

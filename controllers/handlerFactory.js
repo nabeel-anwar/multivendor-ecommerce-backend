@@ -1,5 +1,6 @@
 const APIFeatures = require('./../utils/apiFeatures');
 const AppError = require('./../utils/appError');
+const {query} = require("express");
 
 exports.deleteOne = (Model) => {
     return async (request, response, next) => {
@@ -113,3 +114,42 @@ exports.getAll = (Model) => {
         }
     };
 };
+
+
+exports.search = (Model, fieldsToSearch) => {
+    return async (request, response, next) => {
+        try{
+            if (request.query.search) {
+                const searchString = request.query.search; // getting search string
+
+                //let fields = Object.keys(Model.schema.paths); // getting documents keys to search
+
+                // fields = fields.filter((f) => (f !== "_id") && (f !== 'id') && (f !== "__v")); // filter unnecessary key
+                // let fields = fieldsToSearch;
+                // fields = fields.filter(
+                //     (f) => Model.schema.paths[f].instance !== "ObjectId"
+                // ); // filter objectID keys (which is used to populate)
+
+
+
+                const regexQuery = fieldsToSearch.map((field) => ({
+                    [field]: { $regex: searchString, $options: "i" },
+                })); // creating fields array like: { name: { $regex: "searchString", $options: "i" } };
+
+                const queryResult = await Model.find({$or: regexQuery});
+
+                response.status(200).json({
+                    status: 'success',
+                    length: queryResult.length,
+                    data: queryResult
+                })
+            }else{
+                return next(new AppError('cannot find the search string in query', 404));
+            }
+
+        }catch (error) {
+            error.statusCode = 404;
+            next(error);
+        }
+    }
+}
