@@ -1,5 +1,5 @@
-const Address = require('./../models/addressModel');
-const Factory = require('./handlerFactory');
+const Address = require('../../models/addressModel');
+const Factory = require('../handlerFactory');
 
 exports.getAddresses = Factory.getAll(Address);
 
