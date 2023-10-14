@@ -1,4 +1,4 @@
-const Zipcode = require('../../models/zipcodeModel');
+const Zipcode = require('../../models/locations/zipcodeModel');
 const Factory = require('../handlerFactory');
 
 exports.searchZipcode = Factory.search(Zipcode, ['code']);

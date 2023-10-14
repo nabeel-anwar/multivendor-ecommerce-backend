@@ -1,4 +1,4 @@
-const City = require('../../models/cityModel');
+const City = require('../../models/locations/cityModel');
 const Factory = require('../handlerFactory');
 
 

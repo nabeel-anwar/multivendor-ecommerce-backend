@@ -8,7 +8,7 @@ const AppError = require("./utils/appError");
 
 const userRouter = require('./routes/userRoutes');
 const sellerRouter = require('./routes/sellerRoutes');
-const addressRouter = require('./routes/addressRouter');
+const addressRouter = require('./routes/locations/addressRouter');
 const brandRouter = require('./routes/brandRoutes');
 const categoryRouter = require('./routes/categoryRoutes');
 const seedRouter = require('./routes/seedRoutes');

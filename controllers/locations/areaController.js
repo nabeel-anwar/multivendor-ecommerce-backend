@@ -1,4 +1,4 @@
-const Area = require('../../models/areaModel');
+const Area = require('../../models/locations/areaModel');
 const Factory = require('./../handlerFactory');
 
 

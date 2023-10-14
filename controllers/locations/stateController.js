@@ -1,4 +1,4 @@
-const State = require('../../models/stateModel');
+const State = require('../../models/locations/stateModel');
 const Factory = require('../handlerFactory');
 
 
