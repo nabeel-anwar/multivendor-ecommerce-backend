@@ -8,7 +8,6 @@ const AppError = require("./utils/appError");
 
 const userRouter = require('./routes/userRoutes');
 const sellerRouter = require('./routes/sellerRoutes');
-const addressRouter = require('./routes/locations/addressRouter');
 const brandRouter = require('./routes/brandRoutes');
 const categoryRouter = require('./routes/categoryRoutes');
 const seedRouter = require('./routes/seedRoutes');
@@ -16,6 +15,11 @@ const productRouter = require('./routes/productRoutes');
 const cartRouter = require('./routes/cartRoutes');
 const orderRouter = require('./routes/orderRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
+const addressRouter = require('./routes/locations/addressRouter');
+const areaRouter = require('./routes/locations/areaRouter');
+const cityRouter = require('./routes/locations/cityRouter');
+const stateRouter = require('./routes/locations/stateRouter');
+const zipcodeRouter= require('./routes/locations/zipcodeRouter');
 
 
 const app = express();
@@ -54,14 +58,17 @@ app.use((request, response, next) => {
 // 2) Routes
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/sellers', sellerRouter);
-app.use('/api/v1/addresses', addressRouter);
 app.use('/api/v1/categories', categoryRouter);
 app.use('/api/v1/brands', brandRouter);
 app.use('/api/v1/products', productRouter);
 app.use('/api/v1/reviews', reviewRouter);
 app.use('/api/v1/cart', cartRouter);
 app.use('/api/v1/orders', orderRouter);
-
+app.use('/api/v1/addresses', addressRouter);
+app.use('/api/v1/areas', areaRouter);
+app.use('/api/v1/cities', cityRouter);
+app.use('/api/v1/states', stateRouter);
+app.use('/api/v1/zipcodes', zipcodeRouter);
 app.use('/api/v1/seed', seedRouter);
 app.all("*", (request, response, next) => {
   // const err = new Error(`can't find ${request.originalUrl} on this server`);
