@@ -1,5 +1,6 @@
 const express = require('express');
 const userController = require("../controllers/userController");
+const {multerUpload} = require("../utils/fileHandler");
 
 const userRouter = express.Router();
 
@@ -13,7 +14,7 @@ userRouter
 userRouter
     .route('/:id')
     .get(userController.getUser)
-    .patch(userController.updateMe)
+    .patch(multerUpload.single('profilePicture'),userController.updateMe)
     .delete(userController.deleteMe);
 
 module.exports = userRouter;
